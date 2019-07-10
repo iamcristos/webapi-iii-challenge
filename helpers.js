@@ -1,8 +1,15 @@
 function errorHelper(res,status,message) {
     return res.status(status).json({
-        status: status,
+        status,
         message
     })
 }
 
-module.exports = {errorHelper};
+function successHelper(res,status,data) {
+   return res.status(status).json({
+        status,
+        data
+    });
+}
+
+module.exports = {errorHelper, successHelper};
