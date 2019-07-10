@@ -11,6 +11,15 @@ function logger(req,res,next) {
         next()
 };
 
+function validateId(req,res,next) {
+    const { id } = req.params;
+    if(!Number(id)){
+        return errorHelper(res, 400, "Invalid Id")
+    }
+
+    next()
+}
+
 async function validateUserId(req,res,next) {
     const { id } = req.params;
     try {
@@ -63,4 +72,9 @@ async function validatePostId(req, res, next) {
     next()
 };
 
-module.exports = {logger, validateUserId, validateUser, validatePost, validatePostId}
+module.exports = {logger, 
+    validateId, 
+    validateUserId,
+     validateUser, 
+     validatePost, 
+     validatePostId};

@@ -1,5 +1,5 @@
 const express = require('express');
-const { validateUser, validateUserId } = require('../middleware/middleware')
+const { validateUser, validateUserId, validateId } = require('../middleware/middleware')
 const db = require('./userDb');
 const postDb = require('../posts/postDb');
 const {errorHelper, successHelper} = require('../helpers');
@@ -19,7 +19,7 @@ router.post('/', validateUser,async (req, res) => {
     }
 });
 
-router.post('/:id/posts', validateUserId,async(req, res) => {
+router.post('/:id/posts', validateId, validateUserId,async(req, res) => {
     const { body } = req;
     const { id } = req.params;
     try {
@@ -46,7 +46,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:id', validateUserId, async (req, res) => {
+router.get('/:id', validateId,validateUserId, async (req, res) => {
     try {
         const {user} = req;
         return successHelper(res, 200, user);
@@ -55,7 +55,7 @@ router.get('/:id', validateUserId, async (req, res) => {
     }
 });
 
-router.get('/:id/posts', validateUserId,async (req, res) => {
+router.get('/:id/posts', validateId,validateUserId,async (req, res) => {
     const {id} = req;
     try {
         const posts = await db.getUserPosts(id)
@@ -68,7 +68,7 @@ router.get('/:id/posts', validateUserId,async (req, res) => {
     }
 });
 
-router.delete('/:id', validateUserId,async (req, res) => {
+router.delete('/:id', validateId,validateUserId,async (req, res) => {
     const { id } = req.params;
     try {
         const user = await db.remove(id);
@@ -78,7 +78,7 @@ router.delete('/:id', validateUserId,async (req, res) => {
     }
 });
 
-router.put('/:id', validateUserId, validateUser, async(req, res) => {
+router.put('/:id', validateId,validateUserId, validateUser, async(req, res) => {
     const { id } = req.params;
     const { body } = req;
     try {

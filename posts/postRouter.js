@@ -1,6 +1,6 @@
 const express = require('express');
 const db= require('./postDb');
-const {validatePostId, validatePost} = require('../middleware/middleware');
+const {validatePostId, validatePost, validateId} = require('../middleware/middleware');
 const {errorHelper, successHelper} = require('../helpers');
 const router = express.Router();
 
@@ -16,12 +16,12 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:id',validatePostId ,(req, res) => {
+router.get('/:id',validateId, validatePostId ,(req, res) => {
     const {post} = req;
     return successHelper(res, 200, post);
 });
 
-router.delete('/:id', validatePostId,async (req, res) => {
+router.delete('/:id', validateId,validatePostId,async (req, res) => {
     try {
         const post = await db.remove(req.params.id)
         return successHelper(res, 200, "post deleted succesfully")
@@ -30,7 +30,7 @@ router.delete('/:id', validatePostId,async (req, res) => {
     }
 });
 
-router.put('/:id', validatePostId, validatePost,async (req, res) => {
+router.put('/:id', validateId,validatePostId, validatePost,async (req, res) => {
     const { id } = req.params;
     const {body} = req;
     try {
