@@ -2,12 +2,14 @@
 const express = require('express');
 const {logger} = require('./middleware/middleware');
 const userRoute = require('./users/userRouter');
+const postRoute = require('./posts/postRouter');
 const server = express();
 const PORT = process.env.PORT || 5000;
 
 server.use(express.json());
 server.use(logger);
 server.use('/api/user', userRoute);
+server.use('/api/post', postRoute)
 server.get('/', (req,res)=>{
     res.status(200).json({
         status: 200,

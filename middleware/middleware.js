@@ -1,4 +1,5 @@
 const db = require('../users/userDb');
+const postDb = require('../posts/postDb');
 
 function logger(req,res,next) {
     console.log(
@@ -65,4 +66,25 @@ async function validatePost(req,res,next) {
     next()
 }
 
-module.exports = {logger, validateUserId, validateUser, validatePost}
+async function validatePostId(req, res, next) {
+    const { id } = req.params;
+    try {
+        const post = await postDb.getById(id)
+        if(!Object.keys(post).length) {
+           return res.status(404).json({
+                status:404,
+                message:"Post not found"
+            })
+        }
+        req.post = post;
+    } catch (error) {
+        return res.status(500).json({
+            status:500,
+            message:"Error getting posts"
+        })
+    }
+
+    next()
+};
+
+module.exports = {logger, validateUserId, validateUser, validatePost, validatePostId}
