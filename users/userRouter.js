@@ -28,10 +28,8 @@ router.post('/:id/posts', validateUserId,async(req, res) => {
             user_id:id
         }
         const post = await postDb.insert(newPost)
-        console.log(post)
         successHelper(res, 201, post)
     } catch (error) {
-        console.log(error.message)
         return errorHelper(res, 500, "Error can't post")
     }
 });
