@@ -13,7 +13,7 @@ async function validateUserId(req,res,next) {
     const { id } = req.params;
     try {
         const user = await db.getById(id)
-        if (!user.length) {
+        if (!Object.keys(user)) {
             return res.status(404).json({
                 status: 404,
                 message: "User not found"
@@ -31,7 +31,7 @@ async function validateUserId(req,res,next) {
 
 async function validateUser(req,res,next) {
     const {body} = req;
-    if (!body.length) {
+    if (!Object.keys(body)) {
         return res.status(400).json({
             status: 400,
             message: "missing body"
@@ -49,7 +49,7 @@ async function validateUser(req,res,next) {
 
 async function validatePost(req,res,next) {
     const {body} = req;
-    if (!body.length) {
+    if (!Object.keys(body)) {
         return res.status(400).json({
             status: 400,
             message: "missing body"
