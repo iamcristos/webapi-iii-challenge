@@ -1,5 +1,6 @@
 const db = require('../users/userDb');
 const postDb = require('../posts/postDb');
+const {errorHelper} = require('../helpers');
 
 function logger(req,res,next) {
     console.log(
@@ -15,17 +16,11 @@ async function validateUserId(req,res,next) {
     try {
         const user = await db.getById(id)
         if (!Object.keys(user)) {
-            return res.status(404).json({
-                status: 404,
-                message: "User not found"
-            })
+           return errorHelper(res,404,"User not found")
         }
         req.user = user
     } catch (error) {
-        return res.status(500).json({
-            status: 500,
-            message: "Could not get User"
-        })
+       return errorHelper(res,500,"Could not get User")
     };
     next();
 };
@@ -33,17 +28,11 @@ async function validateUserId(req,res,next) {
 async function validateUser(req,res,next) {
     const {body} = req;
     if (!Object.keys(body)) {
-        return res.status(400).json({
-            status: 400,
-            message: "missing body"
-        })
+       return errorHelper(res,400,"missing body")
     }
     const {name} = body;
     if(!name.trim()) {
-        return res.status(400).json({
-            status:400,
-            message: "missing users name"
-        })
+       return errorHelper(res,400,"missing users name")
     }
     next()
 };
@@ -51,17 +40,11 @@ async function validateUser(req,res,next) {
 async function validatePost(req,res,next) {
     const {body} = req;
     if (!Object.keys(body)) {
-        return res.status(400).json({
-            status: 400,
-            message: "missing body"
-        })
+       return errorHelper(res, 400, "missing body")
     }
     const {text} = body;
     if(!text.trim()) {
-        return res.status(400).json({
-            status:400,
-            message: "missing post text"
-        })
+       return errorHelper(res, 400, "missing post text")
     }
     next()
 }
@@ -71,19 +54,12 @@ async function validatePostId(req, res, next) {
     try {
         const post = await postDb.getById(id)
         if(!Object.keys(post).length) {
-           return res.status(404).json({
-                status:404,
-                message:"Post not found"
-            })
+            return errorHelper(res, 404, "Post not found")
         }
         req.post = post;
     } catch (error) {
-        return res.status(500).json({
-            status:500,
-            message:"Error getting posts"
-        })
+        return errorHelper(res, 500, "Error getting posts")
     }
-
     next()
 };
 

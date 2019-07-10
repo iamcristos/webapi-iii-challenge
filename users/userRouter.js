@@ -2,6 +2,7 @@ const express = require('express');
 const { validateUser, validateUserId } = require('../middleware/middleware')
 const db = require('./userDb');
 const postDb = require('../posts/postDb');
+const {errorHelper} = require('../helpers');
 
 const router = express.Router();
 
@@ -10,46 +11,48 @@ router.post('/', validateUser,async (req, res) => {
     try {
         const newUser = db.insert(body);
         if(!newUser){
-            return res.status(400).json({
-                status: 400,
-                message: "user already exists"
-            })
+            return errorHelper(res, 400, "user already exists")
         }
         res.status(201).json({
             status:201,
             newUser
         });
     } catch (error) {
-        return res.status(500).json({
-            status:500,
-            message: "Error adding user"
-        })
+        return errorHelper(res, 500, "Error adding user")
     }
 });
 
 router.post('/:id/posts', validateUserId,async(req, res) => {
     const { body } = req;
-
+    const { id } = req.params;
+    try {
+        const newPost = {
+            ...body,
+            user_id:id
+        }
+        console.log(newPost)
+        const post = await postDb.insert(newPost)
+        res.status(201).json({
+            status:201,
+            post
+        })
+    } catch (error) {
+        return errorHelper(res, 500, "Error can't post")
+    }
 });
 
 router.get('/', async (req, res) => {
     try {
         const users = await db.get()
         if(!users.length) {
-            return res.status(200).json({
-                status:200,
-                message: "no users"
-            })
+            return errorHelper(res, 200, "no users")
         }
         res.status(200).json({
             status:200,
             users
         })
     } catch (error) {
-        return res.status(500).json({
-            status:500,
-            message: "Error loading users"
-        })
+        return errorHelper(res, 500, "Error loading users")
     }
 });
 
@@ -61,10 +64,7 @@ router.get('/:id', validateUserId, async (req, res) => {
             user
         });
     } catch (error) {
-        return res.status(500).json({
-            status:500,
-            message: "Error cannot get user"
-        })
+        return errorHelper(res, 500, "Error cannot get user")
     }
 });
 
@@ -73,20 +73,14 @@ router.get('/:id/posts', validateUserId,async (req, res) => {
     try {
         const posts = await db.getUserPosts(id)
         if(!posts.length) {
-            return res.status(200).json({
-                status:200,
-                message: "No Post for this user"
-            })
+            return errorHelper(res, 200, "No Post for this user")
         }
         res.status(200).json({
             status:200,
             posts
         })
     } catch (error) {
-        return res.status(500).json({
-            status: 500,
-            message: "Error getting post"
-        })
+        return errorHelper(res, 500, "Error getting post")
     }
 });
 
@@ -99,10 +93,7 @@ router.delete('/:id', validateUserId,async (req, res) => {
             message: "User deleted"
         })
     } catch (error) {
-        return res.status(500).json({
-            status:500,
-            message: "Error cannot delete User"
-        })
+        return errorHelper(res, 500, "Error cannot delete User");
     }
 });
 
@@ -111,21 +102,12 @@ router.put('/:id', validateUserId, validateUser, async(req, res) => {
     const { body } = req;
     try {
        const user = await db.update(id, body)
-       if(!user){
-           return res.status(400).json({
-               status: 400,
-               message: "user already exists"
-           })
-       }
        res.status(200).json({
            status:200,
            user
        }) 
     } catch (error) {
-        return res.status(500).json({
-            status: 500,
-            message: "Error updating user"
-        })
+        return errorHelper(res, 500, "Error updating user")
     }
 });
 

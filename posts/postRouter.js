@@ -1,26 +1,21 @@
 const express = require('express');
 const db= require('./postDb');
 const {validatePostId, validatePost} = require('../middleware/middleware');
+const {errorHelper} = require('../helpers');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
         const posts = await db.get()
         if(!posts.length){
-            return res.status(200).json({
-                status:200,
-                message: "Posts is empty"
-            })
+            return errorHelper(res, 200, "Posts is empty")
         }
         res.status(200).json({
             status:200,
             posts
         })
     } catch (error) {
-        res.status(500).json({
-            status:500,
-            message: "Error getting posts"
-        })
+        return errorHelper(res, 500, "Error getting posts")
     }
 });
 
@@ -40,10 +35,7 @@ router.delete('/:id', validatePostId,async (req, res) => {
             message: "post deleted succesfully"
         })
     } catch (error) {
-        res.status(500).json({
-            status:500,
-            message: "Error cannot delete post"
-        })
+        return errorHelper(res, 500, "Error cannot delete post")
     }
 });
 
@@ -57,10 +49,7 @@ router.put('/:id', validatePostId, validatePost,async (req, res) => {
             post
         })
     } catch (error) {
-        res.status(500).json({
-            status:500,
-            message:"Error updating user"
-        })
+        return errorHelper(res, 500, "Error updating user")
     }
 
 });
