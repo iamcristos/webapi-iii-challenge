@@ -3,8 +3,12 @@ const express = require('express');
 const {logger} = require('./middleware/middleware');
 const userRoute = require('./users/userRouter');
 const postRoute = require('./posts/postRouter');
+const dotenv = require('dotenv');
+
 const server = express();
-const PORT = process.env.PORT || 5000;
+dotenv.config();
+
+const PORT = process.env.PORT;
 
 server.use(express.json());
 server.use(logger);
